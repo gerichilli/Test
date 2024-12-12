@@ -79,7 +79,7 @@
       image.dx = 0;
 
       image.ratio = image.width / resizeInfo.canvasWidth;
-      // Safariだと-値は受け付けられない
+      
       if (image.sy < 0) {
         image.dy = (image.sy * -1) / image.ratio;
         image.sy = 0;
