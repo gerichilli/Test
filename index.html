@@ -134,30 +134,32 @@
         image.sx = 0;
       }
 
-      const offscreen = new OffscreenCanvas(image.width, image.height); // Kích thước vùng cần cắt (image.width, image.height)
-      const offscreenCtx = offscreen.getContext('2d');
-
-      // Lưu trạng thái của OffscreenCanvas
-      offscreenCtx.save();
-
       // Tính toán tỷ lệ scale
       const scaleX = resizeInfo.canvasWidth / image.width;
       const scaleY = resizeInfo.canvasHeight / image.height;
-      
-      // Thiết lập scale
-      // offscreenCtx.scale(scaleX, scaleY);
 
-      // Vẽ vùng cắt vào OffscreenCanvas
+      // Lấy tỷ lệ nhỏ hơn để đảm bảo không bị méo
+      const scale = Math.min(scaleX, scaleY);
+
+      // Giảm kích thước OffscreenCanvas
+      const scaledWidth = Math.ceil(image.width * scale);
+      const scaledHeight = Math.ceil(image.height * scale);
+
+      // Tạo OffscreenCanvas với kích thước nhỏ hơn
+      const offscreen = new OffscreenCanvas(scaledWidth, scaledHeight);
+      const offscreenCtx = offscreen.getContext('2d');
+
+      // Vẽ ảnh đã giảm tỷ lệ vào OffscreenCanvas
       offscreenCtx.drawImage(
         img,
         image.sx,
         image.sy,
-        resizeInfo.canvasWidth,
-        resizeInfo.canvasWidth,
+        image.width,
+        image.height,
         0,
         0,
-        resizeInfo.canvasWidth,
-        resizeInfo.canvasWidth,
+        scaledWidth, // Vẽ với kích thước đã giảm
+        scaledHeight // Vẽ với kích thước đã giảm
       );
 
       ctx.drawImage(
