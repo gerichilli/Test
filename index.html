@@ -29,14 +29,16 @@
 </head>
 
 <body>
-  <canvas class="canvas1" id="canvas1" height="2400" width="4266"></canvas>
-  <canvas class="canvas2" id="canvas2" height="2400" width="4266"></canvas>
-  <canvas class="canvas3" id="canvas3" height="2400" width="4266"></canvas>
+  <canvas class="canvas1" id="canvas1"></canvas>
+  <canvas class="canvas2" id="canvas2"></canvas>
+  <canvas class="canvas3" id="canvas3"></canvas>
   <ul class="info"></ul>
   <script>
     const resizeInfo = {
       "height": 2000,
       "width": 3558,
+      // "canvasHeight": 2400,
+      // "canvasWidth": 4266.666666666667
       "canvasHeight": 2400,
       "canvasWidth": 4266.666666666667
     }
@@ -93,27 +95,38 @@
       image.dy = 0;
       image.dx = 0;
 
+      const scaleX = canvas.width / img.width;  // Tỷ lệ phóng theo chiều ngang
+      const scaleY = canvas.height / img.height; // Tỷ lệ phóng theo chiều dọc
+
+      // Chọn tỷ lệ nhỏ hơn để hình ảnh không bị méo
+      const scale = Math.min(scaleX, scaleY);
+
+      // Tính kích thước ảnh phóng to
+      const drawWidth = img.width * scaleX;   // Chiều rộng phóng to
+      const drawHeight = img.height * scaleY; // Chiều cao phóng to
+
       image.ratio = image.width / resizeInfo.canvasWidth;
 
-      if (image.sy < 0) {
-        image.dy = (image.sy * -1) / image.ratio;
-        image.sy = 0;
-      }
-      if (image.sx < 0) {
-        image.dx = (image.sx * -1) / image.ratio;
-        image.sx = 0;
-      }
+      // For Safari
+      // if (image.sy < 0) {
+      //   image.dy = (image.sy * -1) / image.ratio;
+      //   image.sy = 0;
+      // }
+      // if (image.sx < 0) {
+      //   image.dx = (image.sx * -1) / image.ratio;
+      //   image.sx = 0;
+      // }
 
       ctx.drawImage(
         img,
-        image.sx, //         
-        image.sy, //         
-        image.width, //    
-        image.height, //    
-        image.dx, //         
-        image.dy, //        
-        resizeInfo.canvasWidth,
-        resizeInfo.canvasHeight
+        image.sx,      
+        image.sy,      
+        image.width,  
+        image.height,  
+        image.dx,        
+        image.dy,
+        drawWidth,
+        drawHeight
       );
 
       const list = document.querySelector('.info')
