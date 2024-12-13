@@ -74,8 +74,6 @@
     const imageInfo1 = {
       // "dy": 0,
       // "dx": 0,
-      "sy": -611.5999999999999,
-      "sx": -423,
       "sy": -2424.7999999999997,
       "sx": -3724.2,
       "height": 6190.8,
@@ -126,14 +124,14 @@
       image.ratio = image.width / resizeInfo.canvasWidth;
 
       // For Safari
-      if (image.sy < 0) {
-        image.dy = (image.sy * -1) / image.ratio;
-        image.sy = 0;
-      }
-      if (image.sx < 0) {
-        image.dx = (image.sx * -1) / image.ratio;
-        image.sx = 0;
-      }
+      // if (image.sy < 0) {
+      //   image.dy = (image.sy * -1) / image.ratio;
+      //   image.sy = 0;
+      // }
+      // if (image.sx < 0) {
+      //   image.dx = (image.sx * -1) / image.ratio;
+      //   image.sx = 0;
+      // }
 
       const offscreen = new OffscreenCanvas(image.width, image.height); // Kích thước vùng cần cắt (image.width, image.height)
       const offscreenCtx = offscreen.getContext('2d');
