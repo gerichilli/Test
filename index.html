@@ -136,13 +136,16 @@
 
       const offscreen = new OffscreenCanvas(image.width, image.height); // Kích thước vùng cần cắt (image.width, image.height)
       const offscreenCtx = offscreen.getContext('2d');
-      const clippingCanvas = document.getElementById('reuseCanvas'); // Create an inline canvas
-      clippingCanvas.width = image.width; // Width of the region to clip
-      clippingCanvas.height = image.height; // Height of the region to clip
-      const clippingCtx = clippingCanvas.getContext('2d');
+
+      // Lưu trạng thái của OffscreenCanvas
+      offscreenCtx.save();
+
+      // Tính toán tỷ lệ scale
+      const scaleX = resizeInfo.canvasWidth / image.width;
+      const scaleY = resizeInfo.canvasHeight / image.height;
 
       // Vẽ vùng cắt vào OffscreenCanvas
-      clippingCtx.drawImage(
+      offscreenCtx.drawImage(
         img,
         image.sx,
         image.sy,
@@ -154,8 +157,11 @@
         image.height,
       );
 
+      // Thiết lập scale
+      offscreenCtx.scale(scaleX, scaleY);
+
       ctx.drawImage(
-        clippingCanvas,
+        offscreen,
         // image.sx,      
         // image.sy,      
         // image.width,  
