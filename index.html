@@ -95,15 +95,16 @@
       image.dy = 0;
       image.dx = 0;
 
-      const scaleX = canvas.width / img.width;  // Tỷ lệ phóng theo chiều ngang
-      const scaleY = canvas.height / img.height; // Tỷ lệ phóng theo chiều dọc
+      // Scale image
+      // const scaleX = canvas.width / img.width;  // Tỷ lệ phóng theo chiều ngang
+      // const scaleY = canvas.height / img.height; // Tỷ lệ phóng theo chiều dọc
 
-      // Chọn tỷ lệ nhỏ hơn để hình ảnh không bị méo
-      const scale = Math.min(scaleX, scaleY);
+      // // Chọn tỷ lệ nhỏ hơn để hình ảnh không bị méo
+      // const scale = Math.min(scaleX, scaleY);
 
-      // Tính kích thước ảnh phóng to
-      const drawWidth = img.width * scaleX;   // Chiều rộng phóng to
-      const drawHeight = img.height * scaleY; // Chiều cao phóng to
+      // // Tính kích thước ảnh phóng to
+      // const drawWidth = img.width * scaleX;   // Chiều rộng phóng to
+      // const drawHeight = img.height * scaleY; // Chiều cao phóng to
 
       image.ratio = image.width / resizeInfo.canvasWidth;
 
@@ -123,10 +124,10 @@
         image.sy,      
         image.width,  
         image.height,  
-        image.dx,        
-        image.dy,
-        drawWidth,
-        drawHeight
+        // image.dx,        
+        // image.dy,
+        // resizeInfo.canvasWidth,
+        // resizeInfo.canvasHeight
       );
 
       const list = document.querySelector('.info')
