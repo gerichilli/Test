@@ -143,22 +143,22 @@
       // Tính toán tỷ lệ scale
       const scaleX = resizeInfo.canvasWidth / image.width;
       const scaleY = resizeInfo.canvasHeight / image.height;
+      
+      // Thiết lập scale
+      // offscreenCtx.scale(scaleX, scaleY);
 
       // Vẽ vùng cắt vào OffscreenCanvas
       offscreenCtx.drawImage(
         img,
         image.sx,
         image.sy,
-        image.width,
-        image.height,
+        resizeInfo.canvasWidth,
+        resizeInfo.canvasWidth,
         0,
         0,
-        image.width,
-        image.height,
+        resizeInfo.canvasWidth,
+        resizeInfo.canvasWidth,
       );
-
-      // Thiết lập scale
-      offscreenCtx.scale(scaleX, scaleY);
 
       ctx.drawImage(
         offscreen,
