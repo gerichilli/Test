@@ -84,21 +84,21 @@
     const imageInfo2 = {
       // "dy": 0,
       // "dx": 0,
-      "sy": 100,
-      "sx": 100,
-      "height": 518.4,
-      "width": 921.5999999999999,
-      "ratio": 0.5
+      "sy": -611.5999999999999,
+      "sx": -423,  
+      "height": 2476.7999999999997,
+      "width": 4402.8,
+      "ratio": 1.03190625
     }
 
     const imageInfo3 = {
       // "dy": 0,
       // "dx": 0,
-      "sy": 0,
-      "sx": 0,
+      "sy": 100,
+      "sx": 100,
       "height": 518.4,
       "width": 921.5999999999999,
-      "ratio": 1
+      "ratio": 0.5
     }
 
     const img = new Image();
@@ -124,14 +124,14 @@
       image.ratio = image.width / resizeInfo.canvasWidth;
 
       // For Safari
-      // if (image.sy < 0) {
-      //   image.dy = (image.sy * -1) / image.ratio;
-      //   image.sy = 0;
-      // }
-      // if (image.sx < 0) {
-      //   image.dx = (image.sx * -1) / image.ratio;
-      //   image.sx = 0;
-      // }
+      if (image.sy < 0) {
+        image.dy = (image.sy * -1) / image.ratio;
+        image.sy = 0;
+      }
+      if (image.sx < 0) {
+        image.dx = (image.sx * -1) / image.ratio;
+        image.sx = 0;
+      }
 
       const offscreen = new OffscreenCanvas(image.width, image.height); // Kích thước vùng cần cắt (image.width, image.height)
       const offscreenCtx = offscreen.getContext('2d');
@@ -180,6 +180,14 @@
         <li>dy: ${imageInfo2.dy}</li>
         <li>w: ${imageInfo2.width}</li>
         <li>h: ${imageInfo2.height}</li>
+
+        <h2>imageInfo3</h2>
+        <li>sx: ${imageInfo3.sx}</li>
+        <li>sy: ${imageInfo3.sy}</li>
+        <li>dx: ${imageInfo3.dx}</li>
+        <li>dy: ${imageInfo3.dy}</li>
+        <li>w: ${imageInfo3.width}</li>
+        <li>h: ${imageInfo3.height}</li>
       `
     };
   </script>
