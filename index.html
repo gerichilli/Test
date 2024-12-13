@@ -60,6 +60,7 @@
   </div>
   <canvas class="canvas2" id="canvas2"></canvas>
   <canvas class="canvas3" id="canvas3"></canvas>
+  <canvas id="reuseCanvas" style="display: none;"></canvas>
   <ul class="info"></ul>
   <script>
     const resizeInfo = {
@@ -135,9 +136,13 @@
 
       const offscreen = new OffscreenCanvas(image.width, image.height); // Kích thước vùng cần cắt (image.width, image.height)
       const offscreenCtx = offscreen.getContext('2d');
+      const clippingCanvas = document.getElementById('reuseCanvas'); // Create an inline canvas
+      clippingCanvas.width = image.width; // Width of the region to clip
+      clippingCanvas.height = image.height; // Height of the region to clip
+      const clippingCtx = clippingCanvas.getContext('2d');
 
       // Vẽ vùng cắt vào OffscreenCanvas
-      offscreenCtx.drawImage(
+      clippingCtx.drawImage(
         img,
         image.sx,
         image.sy,
@@ -150,7 +155,7 @@
       );
 
       ctx.drawImage(
-        offscreen,
+        clippingCanvas,
         // image.sx,      
         // image.sy,      
         // image.width,  
