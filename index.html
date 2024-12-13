@@ -137,13 +137,10 @@
       // Tính toán tỷ lệ scale
       const scaleX = resizeInfo.canvasWidth / image.width;
       const scaleY = resizeInfo.canvasHeight / image.height;
-
-      // Lấy tỷ lệ nhỏ hơn để đảm bảo không bị méo
-      const scale = Math.min(scaleX, scaleY);
-
+      
       // Giảm kích thước OffscreenCanvas
-      const scaledWidth = Math.ceil(image.width * scale);
-      const scaledHeight = Math.ceil(image.height * scale);
+      const scaledWidth = Math.ceil(image.width * scaleX);
+      const scaledHeight = Math.ceil(image.height * scaleY);
 
       // Tạo OffscreenCanvas với kích thước nhỏ hơn
       const offscreen = new OffscreenCanvas(scaledWidth, scaledHeight);
