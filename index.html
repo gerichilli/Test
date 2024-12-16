@@ -68,61 +68,68 @@
       "width": 3558,
       "canvasHeight": 2400,
       "canvasWidth": 4266.666666666667
-    }
+    };
 
     const imageInfo1 = {
-      // "dy": 0,
-      // "dx": 0,
       "sy": -2424.7999999999997,
       "sx": -3724.2,
       "height": 6190.8,
       "width": 11006.4,
       "ratio": 2.5796249999999996
-    }
+    };
 
     const imageInfo2 = {
-      // "dy": 0,
-      // "dx": 0,
       "sy": -611.5999999999999,
       "sx": -423,
       "height": 2476.7999999999997,
       "width": 4402.8,
       "ratio": 1.03190625
-    }
+    };
 
     const imageInfo3 = {
-      // "dy": 0,
-      // "dx": 0,
       "sy": 100,
       "sx": 100,
       "height": 518.4,
       "width": 921.5999999999999,
       "ratio": 0.5
-    }
+    };
 
     const img = new Image();
     img.onload = () => {
-      drawImage(imageInfo1, '.canvas1')
-      drawImage(imageInfo2, '.canvas2')
-      drawImage(imageInfo3, '.canvas3')
-    }
+      const scaledImage = downscaleImage(img, 0.25); // Thu nhỏ ảnh gốc trước khi vẽ
+      drawImage(imageInfo1, '.canvas1', scaledImage);
+      drawImage(imageInfo2, '.canvas2', scaledImage);
+      drawImage(imageInfo3, '.canvas3', scaledImage);
+    };
     img.src = './woman.png';
 
-    function drawImage(image, className) {
+    // Hàm thu nhỏ ảnh
+    function downscaleImage(img, scale) {
+      const tempCanvas = document.createElement('canvas');
+      const tempCtx = tempCanvas.getContext('2d');
+
+      tempCanvas.width = img.width * scale;
+      tempCanvas.height = img.height * scale;
+
+      tempCtx.drawImage(img, 0, 0, tempCanvas.width, tempCanvas.height);
+
+      return tempCanvas;
+    }
+
+    // Hàm vẽ ảnh đã chỉnh sửa
+    function drawImage(image, className, scaledImage) {
       const canvas = document.querySelector(className);
       canvas.height = resizeInfo.canvasHeight;
       canvas.width = resizeInfo.canvasWidth;
-      ctx = canvas.getContext('2d');
 
-      const y0 = 0;
-      const x0 = resizeInfo.width / 2;
+      const ctx = canvas.getContext('2d');
 
       image.dy = 0;
       image.dx = 0;
 
       image.ratio = image.width / resizeInfo.canvasWidth;
 
-      // For Safari
+      // Xử lý trường hợp `sy` hoặc `sx` âm
       if (image.sy < 0) {
         image.dy = (image.sy * -1) / image.ratio;
         image.sy = 0;
@@ -132,28 +139,15 @@
         image.sx = 0;
       }
 
-      const offscreen = new OffscreenCanvas(image.width, image.height); // Kích thước vùng cần cắt (image.width, image.height)
-      const offscreenCtx = offscreen.getContext('2d');
+      const scaleRatio = scaledImage.width / img.width; // Tính tỷ lệ thu nhỏ
 
-      // Vẽ vùng cắt vào OffscreenCanvas
-      offscreenCtx.drawImage(
-        img,
-        image.sx,
-        image.sy,
-        image.width,
-        image.height,
-        0,
-        0,
-        image.width,
-        image.height,
-      );
-
+      // Vẽ hình ảnh đã thu nhỏ lên canvas chính
       ctx.drawImage(
-        offscreen,
-        // image.sx,      
-        // image.sy,      
-        // image.width,  
-        // image.height,  
+        scaledImage,
+        image.sx * scaleRatio,
+        image.sy * scaleRatio,
+        image.width * scaleRatio,
+        image.height * scaleRatio,
         image.dx,
         image.dy,
         resizeInfo.canvasWidth,
@@ -172,7 +166,7 @@
         <li>cw: ${resizeInfo.canvasWidth}</li>
         <li>ch: ${resizeInfo.canvasHeight}</li>
       `
-    };
+    }
   </script>
 </body>
 
