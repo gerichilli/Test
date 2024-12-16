@@ -127,44 +127,18 @@
       const offscreen = new OffscreenCanvas(image.width, image.height); // Kích thước vùng cần cắt (image.width, image.height)
       const offscreenCtx = offscreen.getContext('2d');
 
-      if (image.ratio > 1) {
-        console.log(image.ratio)
-        const scale = 1 / image.ratio;
-
-        const adjustedSx = image.sx * scale;
-        const adjustedSy = image.sy * scale;
-
-        const scaledWidth = img.width * scale;
-        const scaledHeight = img.height * scale;
-
-        offscreenCtx.width = scaledWidth;
-        offscreenCtx.height = scaledHeight;
-
-        offscreenCtx.drawImage(
-          img,
-          adjustedSx,
-          adjustedSy,
-          image.width * scale,
-          image.height * scale,
-          0,
-          0,
-          image.width * scale,
-          image.height * scale,
-        );
-      } else {
-        // Vẽ vùng cắt vào OffscreenCanvas
-        offscreenCtx.drawImage(
-          img,
-          image.sx,
-          image.sy,
-          image.width,
-          image.height,
-          0,
-          0,
-          image.width,
-          image.height,
-        );
-      }
+      // Vẽ vùng cắt vào OffscreenCanvas
+      offscreenCtx.drawImage(
+        img,
+        image.sx,
+        image.sy,
+        image.width,
+        image.height,
+        0,
+        0,
+        image.width,
+        image.height,
+      );
 
       ctx.drawImage(
         offscreen,
@@ -203,12 +177,25 @@
       const tileSize = 2048; // Kích thước tối đa mỗi ô
       const scale = resizeInfo.canvasWidth / image.width;
 
-      // Điều chỉnh sx, sy nếu cần
-      const adjustedSx = Math.max(0, image.sx);
-      const adjustedSy = Math.max(0, image.sy);
+      // Điều chỉnh sx, sy và tính dx, dy theo logic yêu cầu
+      let adjustedSx = image.sx;
+      let adjustedSy = image.sy;
+      let adjustedDx = 0;
+      let adjustedDy = 0;
 
-      const adjustedWidth = Math.min(image.width, img.width - adjustedSx);
-      const adjustedHeight = Math.min(image.height, img.height - adjustedSy);
+      image.ratio = image.width / resizeInfo.canvasWidth;
+
+      if (adjustedSy < 0) {
+        adjustedDy = (-adjustedSy) / image.ratio;
+        adjustedSy = 0;
+      }
+      if (adjustedSx < 0) {
+        adjustedDx = (-adjustedSx) / image.ratio;
+        adjustedSx = 0;
+      }
+
+      const adjustedWidth = Math.min(image.width + image.sx, img.width) - adjustedSx;
+      const adjustedHeight = Math.min(image.height + image.sy, img.height) - adjustedSy;
 
       // Tính toán số hàng và cột của các tile
       const cols = Math.ceil(adjustedWidth / tileSize);
@@ -216,14 +203,16 @@
 
       for (let row = 0; row < rows; row++) {
         for (let col = 0; col < cols; col++) {
+          // Tính toán các giá trị của từng tile
           const tileSx = adjustedSx + col * tileSize;
           const tileSy = adjustedSy + row * tileSize;
 
-          const tileWidth = Math.min(tileSize, adjustedSx + adjustedWidth - tileSx);
-          const tileHeight = Math.min(tileSize, adjustedSy + adjustedHeight - tileSy);
+          const tileWidth = Math.min(tileSize, adjustedWidth - col * tileSize);
+          const tileHeight = Math.min(tileSize, adjustedHeight - row * tileSize);
 
-          const dx = col * tileWidth * scale;
-          const dy = row * tileHeight * scale;
+          // Vị trí đích trên canvas
+          const dx = adjustedDx + (tileSx - adjustedSx) * scale;
+          const dy = adjustedDy + (tileSy - adjustedSy) * scale;
 
           const dWidth = tileWidth * scale;
           const dHeight = tileHeight * scale;
