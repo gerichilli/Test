@@ -4,6 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.jsdelivr.net/npm/canvas-size@2"></script>
   <title>Document</title>
   <style>
     * {
@@ -50,12 +51,6 @@
     .canvas3 {
       background-color: #355F2E;
     }
-
-    .limit {
-      color: #355F2E;
-      font-size: 20px;
-      font-weight: 700;
-    }
   </style>
 </head>
 
@@ -67,7 +62,6 @@
   <canvas class="canvas2" id="canvas2"></canvas>
   <canvas class="canvas3" id="canvas3"></canvas>
   <canvas id="reuseCanvas" style="display: none;"></canvas>
-  <p class="limit"></p>
   <ul class="info"></ul>
   <script>
     const resizeInfo = {
@@ -101,9 +95,8 @@
     const img = new Image();
     img.onload = () => {
       drawTiledImage(imageInfo1, '.canvas1')
-      // drawImage(imageInfo1, '.canvas1')
-      drawImage(imageInfo2, '.canvas2')
-      drawImage(imageInfo3, '.canvas3')
+      drawTiledImage(imageInfo2, '.canvas2')
+      drawTiledImage(imageInfo3, '.canvas3')
     }
     img.src = './woman.png';
 
@@ -149,28 +142,11 @@
 
       ctx.drawImage(
         offscreen,
-        // image.sx,      
-        // image.sy,      
-        // image.width,  
-        // image.height,  
         image.dx,
         image.dy,
         resizeInfo.canvasWidth,
         resizeInfo.canvasHeight
       );
-
-      const list = document.querySelector('.info')
-      list.innerHTML = `
-        <h2>imageInfo1</h2>
-        <li>sx: ${imageInfo1.sx}</li>
-        <li>sy: ${imageInfo1.sy}</li>
-        <li>dx: ${imageInfo1.dx}</li>
-        <li>dy: ${imageInfo1.dy}</li>
-        <li>w: ${imageInfo1.width}</li>
-        <li>h: ${imageInfo1.height}</li>
-        <li>cw: ${resizeInfo.canvasWidth}</li>
-        <li>ch: ${resizeInfo.canvasHeight}</li>
-      `
     };
 
     function drawTiledImage(image, className) {
@@ -238,40 +214,6 @@
         }
       }
     }
-
-    function checkCanvasLimit() {
-      const maxCanvasSize = { width: 1, height: 1 };
-      const maxTestSize = 16384; // Arbitrary upper bound to prevent infinite loops
-
-      while (true) {
-        try {
-          maxCanvasSize.width *= 2;
-          maxCanvasSize.height *= 2;
-
-          if (maxCanvasSize.width > maxTestSize || maxCanvasSize.height > maxTestSize) {
-            console.log(
-              `Reached practical upper test limit: ${maxTestSize} x ${maxTestSize}.`
-            );
-            document.querySelector('.limit').innerHTML = `Max Canvas Size Supported: ${maxCanvasSize.width / 2} x ${maxCanvasSize.height / 2}`
-            break;
-          }
-
-          const canvas = document.createElement('canvas');
-          canvas.width = maxCanvasSize.width;
-          canvas.height = maxCanvasSize.height;
-
-          const ctx = canvas.getContext('2d');
-          ctx.fillRect(0, 0, 1, 1); // Test render
-        } catch (e) {
-          console.log(
-            `Max Canvas Size Supported: ${maxCanvasSize.width / 2} x ${maxCanvasSize.height / 2}`
-          );
-          document.querySelector('.limit').innerHTML = `Max Canvas Size Supported: ${maxCanvasSize.width / 2} x ${maxCanvasSize.height / 2}`
-          break;
-        }
-      }
-    }
-    checkCanvasLimit();
   </script>
 </body>
 
