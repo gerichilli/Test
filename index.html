@@ -50,6 +50,12 @@
     .canvas3 {
       background-color: #355F2E;
     }
+
+    .limit {
+      color: #355F2E;
+      font-size: 20px;
+      font-weight: 700;
+    }
   </style>
 </head>
 
@@ -61,6 +67,7 @@
   <canvas class="canvas2" id="canvas2"></canvas>
   <canvas class="canvas3" id="canvas3"></canvas>
   <canvas id="reuseCanvas" style="display: none;"></canvas>
+  <p class="limit"></p>
   <ul class="info"></ul>
   <script>
     const resizeInfo = {
@@ -231,6 +238,40 @@
         }
       }
     }
+
+    function checkCanvasLimit() {
+      const maxCanvasSize = { width: 1, height: 1 };
+      const maxTestSize = 16384; // Arbitrary upper bound to prevent infinite loops
+
+      while (true) {
+        try {
+          maxCanvasSize.width *= 2;
+          maxCanvasSize.height *= 2;
+
+          if (maxCanvasSize.width > maxTestSize || maxCanvasSize.height > maxTestSize) {
+            console.log(
+              `Reached practical upper test limit: ${maxTestSize} x ${maxTestSize}.`
+            );
+            document.querySelector('.limit').innerHTML = `Max Canvas Size Supported: ${maxCanvasSize.width / 2} x ${maxCanvasSize.height / 2}`
+            break;
+          }
+
+          const canvas = document.createElement('canvas');
+          canvas.width = maxCanvasSize.width;
+          canvas.height = maxCanvasSize.height;
+
+          const ctx = canvas.getContext('2d');
+          ctx.fillRect(0, 0, 1, 1); // Test render
+        } catch (e) {
+          console.log(
+            `Max Canvas Size Supported: ${maxCanvasSize.width / 2} x ${maxCanvasSize.height / 2}`
+          );
+          document.querySelector('.limit').innerHTML = `Max Canvas Size Supported: ${maxCanvasSize.width / 2} x ${maxCanvasSize.height / 2}`
+          break;
+        }
+      }
+    }
+    checkCanvasLimit();
   </script>
 </body>
 
