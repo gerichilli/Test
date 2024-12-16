@@ -66,8 +66,6 @@
     const resizeInfo = {
       "height": 2000,
       "width": 3558,
-      // "canvasHeight": 2400,
-      // "canvasWidth": 4266.666666666667
       "canvasHeight": 2400,
       "canvasWidth": 4266.666666666667
     }
@@ -86,7 +84,7 @@
       // "dy": 0,
       // "dx": 0,
       "sy": -611.5999999999999,
-      "sx": -423,  
+      "sx": -423,
       "height": 2476.7999999999997,
       "width": 4402.8,
       "ratio": 1.03190625
@@ -109,6 +107,33 @@
       drawImage(imageInfo3, '.canvas3')
     }
     img.src = './woman.png';
+
+    function drawImageInChunks(ctx, imageInfo, img, chunkSize = 2048) {
+      const cols = Math.ceil(imageInfo.width / chunkSize); // Number of chunks horizontally
+      const rows = Math.ceil(imageInfo.height / chunkSize); // Number of chunks vertically
+
+      for (let row = 0; row < rows; row++) {
+        for (let col = 0; col < cols; col++) {
+          // Calculate source coordinates for each chunk
+          const sx = imageInfo.sx + col * chunkSize;
+          const sy = imageInfo.sy + row * chunkSize;
+          const sWidth = Math.min(chunkSize, imageInfo.width - col * chunkSize);
+          const sHeight = Math.min(chunkSize, imageInfo.height - row * chunkSize);
+
+          ctx.drawImage(
+            img, // Source image
+            sx, // Source X
+            sy, // Source Y
+            sWidth, // Source width
+            sHeight, // Source height
+            0, // Destination X
+            0, // Destination Y
+            sWidth, // Destination width
+            sHeight // Destination height
+          );
+        }
+      }
+    }
 
     function drawImage(image, className) {
       const canvas = document.querySelector(className);
@@ -134,30 +159,22 @@
         image.sx = 0;
       }
 
-      // Tính toán tỷ lệ scale
-      const scaleX = resizeInfo.canvasWidth / image.width;
-      const scaleY = resizeInfo.canvasHeight / image.height;
-      
-      // Giảm kích thước OffscreenCanvas
-      const scaledWidth = Math.ceil(image.width * scaleX);
-      const scaledHeight = Math.ceil(image.height * scaleY);
-
-      // Tạo OffscreenCanvas với kích thước nhỏ hơn
-      const offscreen = new OffscreenCanvas(scaledWidth, scaledHeight);
+      const offscreen = new OffscreenCanvas(image.width, image.height); // Kích thước vùng cần cắt (image.width, image.height)
       const offscreenCtx = offscreen.getContext('2d');
 
-      // Vẽ ảnh đã giảm tỷ lệ vào OffscreenCanvas
-      offscreenCtx.drawImage(
-        img,
-        image.sx,
-        image.sy,
-        image.width,
-        image.height,
-        0,
-        0,
-        scaledWidth, // Vẽ với kích thước đã giảm
-        scaledHeight // Vẽ với kích thước đã giảm
-      );
+      // Vẽ vùng cắt vào OffscreenCanvas
+      drawImageInChunks(offscreenCtx, image,img, 1000)
+      // offscreenCtx.drawImage(
+      //   img,
+      //   image.sx,
+      //   image.sy,
+      //   image.width,
+      //   image.height,
+      //   0,
+      //   0,
+      //   image.width,
+      //   image.height,
+      // );
 
       ctx.drawImage(
         offscreen,
@@ -182,22 +199,6 @@
         <li>h: ${imageInfo1.height}</li>
         <li>cw: ${resizeInfo.canvasWidth}</li>
         <li>ch: ${resizeInfo.canvasHeight}</li>
-
-        <h2>imageInfo2</h2>
-        <li>sx: ${imageInfo2.sx}</li>
-        <li>sy: ${imageInfo2.sy}</li>
-        <li>dx: ${imageInfo2.dx}</li>
-        <li>dy: ${imageInfo2.dy}</li>
-        <li>w: ${imageInfo2.width}</li>
-        <li>h: ${imageInfo2.height}</li>
-
-        <h2>imageInfo3</h2>
-        <li>sx: ${imageInfo3.sx}</li>
-        <li>sy: ${imageInfo3.sy}</li>
-        <li>dx: ${imageInfo3.dx}</li>
-        <li>dy: ${imageInfo3.dy}</li>
-        <li>w: ${imageInfo3.width}</li>
-        <li>h: ${imageInfo3.height}</li>
       `
     };
   </script>
