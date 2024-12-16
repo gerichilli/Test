@@ -71,8 +71,6 @@
     }
 
     const imageInfo1 = {
-      // "dy": 0,
-      // "dx": 0,
       "sy": -2424.7999999999997,
       "sx": -3724.2,
       "height": 6190.8,
@@ -80,8 +78,6 @@
     }
 
     const imageInfo2 = {
-      // "dy": 0,
-      // "dx": 0,
       "sy": -611.5999999999999,
       "sx": -423,
       "height": 2476.7999999999997,
@@ -89,8 +85,6 @@
     }
 
     const imageInfo3 = {
-      // "dy": 0,
-      // "dx": 0,
       "sy": 100,
       "sx": 100,
       "height": 518.4,
@@ -99,7 +93,8 @@
 
     const img = new Image();
     img.onload = () => {
-      drawImage(imageInfo1, '.canvas1')
+      drawTiledImage(imageInfo1, '.canvas1')
+      // drawImage(imageInfo1, '.canvas1')
       drawImage(imageInfo2, '.canvas2')
       drawImage(imageInfo3, '.canvas3')
     }
@@ -196,6 +191,57 @@
         <li>ch: ${resizeInfo.canvasHeight}</li>
       `
     };
+
+    function drawTiledImage(image, className) {
+      const canvas = document.querySelector(className);
+      canvas.height = resizeInfo.canvasHeight;
+      canvas.width = resizeInfo.canvasWidth;
+
+      const ctx = canvas.getContext('2d');
+
+      // Chia nhỏ hình ảnh thành các ô nhỏ (tile)
+      const tileSize = 2048; // Kích thước tối đa mỗi ô
+      const scale = resizeInfo.canvasWidth / image.width;
+
+      // Điều chỉnh sx, sy nếu cần
+      const adjustedSx = Math.max(0, image.sx);
+      const adjustedSy = Math.max(0, image.sy);
+
+      const adjustedWidth = Math.min(image.width, img.width - adjustedSx);
+      const adjustedHeight = Math.min(image.height, img.height - adjustedSy);
+
+      // Tính toán số hàng và cột của các tile
+      const cols = Math.ceil(adjustedWidth / tileSize);
+      const rows = Math.ceil(adjustedHeight / tileSize);
+
+      for (let row = 0; row < rows; row++) {
+        for (let col = 0; col < cols; col++) {
+          const tileSx = adjustedSx + col * tileSize;
+          const tileSy = adjustedSy + row * tileSize;
+
+          const tileWidth = Math.min(tileSize, adjustedSx + adjustedWidth - tileSx);
+          const tileHeight = Math.min(tileSize, adjustedSy + adjustedHeight - tileSy);
+
+          const dx = col * tileWidth * scale;
+          const dy = row * tileHeight * scale;
+
+          const dWidth = tileWidth * scale;
+          const dHeight = tileHeight * scale;
+
+          ctx.drawImage(
+            img,
+            tileSx,
+            tileSy,
+            tileWidth,
+            tileHeight,
+            dx,
+            dy,
+            dWidth,
+            dHeight
+          );
+        }
+      }
+    }
   </script>
 </body>
 
