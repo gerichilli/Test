@@ -63,28 +63,7 @@
   <canvas class="canvas3" id="canvas3"></canvas>
   <canvas id="reuseCanvas" style="display: none;"></canvas>
   <ul class="info"></ul>
-  <p class="version"></p>
   <script>
-    getiOSVersion()
-    
-    function getiOSVersion() {
-      const userAgent = navigator.userAgent || navigator.vendor || window.opera;
-
-      // デバイスがiOSであるか確認
-      if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
-        // ユーザーエージェントからiOSバージョン番号を取得
-        const iOSVersionMatch = userAgent.match(/OS (\d+)_/);
-        if (iOSVersionMatch && iOSVersionMatch.length > 1) {
-          const iOSVersion = parseInt(iOSVersionMatch[1], 10);
-          document.querySelector('.version').innerHTML = `iOS Version: ${iOSVersion}`
-          return iOSVersion;
-        }
-      }
-
-      document.querySelector('.version').innerHTML = `Not iOS Device`
-      return null;
-    };
-
     const resizeInfo = {
       "height": 2000,
       "width": 3558,
@@ -121,6 +100,55 @@
     }
     img.src = './woman.png';
 
+    function drawImage(image, className) {
+      const canvas = document.querySelector(className);
+      canvas.height = resizeInfo.canvasHeight;
+      canvas.width = resizeInfo.canvasWidth;
+      ctx = canvas.getContext('2d', { storage: 'discardable' });
+
+      const y0 = 0;
+      const x0 = resizeInfo.width / 2;
+
+      image.dy = 0;
+      image.dx = 0;
+
+      image.ratio = image.width / resizeInfo.canvasWidth;
+
+      // For Safari
+      if (image.sy < 0) {
+        image.dy = (image.sy * -1) / image.ratio;
+        image.sy = 0;
+      }
+      if (image.sx < 0) {
+        image.dx = (image.sx * -1) / image.ratio;
+        image.sx = 0;
+      }
+
+      const offscreen = new OffscreenCanvas(image.width, image.height); // Kích thước vùng cần cắt (image.width, image.height)
+      const offscreenCtx = offscreen.getContext('2d');
+
+      // Vẽ vùng cắt vào OffscreenCanvas
+      offscreenCtx.drawImage(
+        img,
+        image.sx,
+        image.sy,
+        image.width,
+        image.height,
+        0,
+        0,
+        image.width,
+        image.height,
+      );
+
+      ctx.drawImage(
+        offscreen,
+        image.dx,
+        image.dy,
+        resizeInfo.canvasWidth,
+        resizeInfo.canvasHeight
+      );
+    };
+
     function drawTiledImage(image, className) {
       const canvas = document.querySelector(className);
       canvas.height = resizeInfo.canvasHeight;
@@ -128,63 +156,44 @@
 
       const ctx = canvas.getContext('2d');
 
-      // Chia nhỏ hình ảnh thành các ô nhỏ (tile)
-      const tileSize = 2048; // Kích thước tối đa mỗi ô
+      const maxPixel = 4096; // Kích thước canvas tối đa
       const scale = resizeInfo.canvasWidth / image.width;
 
-      // Điều chỉnh sx, sy và tính dx, dy theo logic yêu cầu
-      let adjustedSx = image.sx;
-      let adjustedSy = image.sy;
-      let adjustedDx = 0;
-      let adjustedDy = 0;
+      image.dy = 0;
+      image.dx = 0;
 
       image.ratio = image.width / resizeInfo.canvasWidth;
 
-      if (adjustedSy < 0) {
-        adjustedDy = (-adjustedSy) / image.ratio;
-        adjustedSy = 0;
+      // For Safari
+      if (image.sy < 0) {
+        image.dy = (image.sy * -1) / image.ratio;
+        image.sy = 0;
       }
-      if (adjustedSx < 0) {
-        adjustedDx = (-adjustedSx) / image.ratio;
-        adjustedSx = 0;
+      if (image.sx < 0) {
+        image.dx = (image.sx * -1) / image.ratio;
+        image.sx = 0;
       }
 
-      const adjustedWidth = Math.min(image.width, img.width);
-      const adjustedHeight = Math.min(image.height, img.height);
+      const adjustedWidth = Math.min(image.width + image.sx, img.width) - image.sx;
+      const adjustedHeight = Math.min(image.height + image.sy, img.height) - image.sy;
 
-      // Tính toán số hàng và cột của các tile
-      const cols = Math.ceil(adjustedWidth / tileSize);
-      const rows = Math.ceil(adjustedHeight / tileSize);
+      const imageWidth = Math.min(maxPixel, adjustedWidth);
+      const imageHeight = Math.min(maxPixel, adjustedHeight);
 
-      for (let row = 0; row < rows; row++) {
-        for (let col = 0; col < cols; col++) {
-          // Tính toán các giá trị của từng tile
-          const tileSx = adjustedSx + col * tileSize;
-          const tileSy = adjustedSy + row * tileSize;
+      const dWidth = imageWidth * scale;
+      const dHeight = imageHeight * scale;
 
-          const tileWidth = Math.min(tileSize, adjustedWidth - col * tileSize);
-          const tileHeight = Math.min(tileSize, adjustedHeight - row * tileSize);
-
-          // Vị trí đích trên canvas
-          const dx = adjustedDx + (tileSx - adjustedSx) * scale;
-          const dy = adjustedDy + (tileSy - adjustedSy) * scale;
-
-          const dWidth = tileWidth * scale;
-          const dHeight = tileHeight * scale;
-
-          ctx.drawImage(
-            img,
-            tileSx,
-            tileSy,
-            tileWidth,
-            tileHeight,
-            dx,
-            dy,
-            dWidth,
-            dHeight
-          );
-        }
-      }
+      ctx.drawImage(
+        img,
+        image.sx,
+        image.sy,
+        imageWidth,
+        imageHeight,
+        image.dx,
+        image.dy,
+        dWidth,
+        dHeight
+      );
     }
   </script>
 </body>
