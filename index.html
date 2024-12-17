@@ -66,26 +66,37 @@
   <p class="size"></p>
   <script>
     function checkCanvasLimit() {
-      let size = 1; // Bắt đầu với 1x1
+      const maxTestSize = 32768; // Giới hạn tối đa kiểm tra
+      const step = 1024; // Tăng dần kích thước
       let canvas = document.createElement('canvas');
       let ctx = canvas.getContext('2d');
 
-      while (true && size <= 12000) {
+      for (let size = step; size <= maxTestSize; size += step) {
         canvas.width = size;
         canvas.height = size;
 
         try {
-          ctx.fillRect(0, 0, size, size);
-          document.querySelector('.size').innerHTML = `Canvas hoạt động với kích thước: ${size} x ${size}`;
-          size += 512; // Tăng gấp đôi kích thước để kiểm tra giới hạn tiếp theo
+          // Vẽ một hình màu đỏ lên canvas
+          ctx.fillStyle = 'red';
+          ctx.fillRect(size - 1, size - 1, 1, 1);
+
+          // Đọc lại pixel cuối cùng để kiểm tra
+          const pixel = ctx.getImageData(size - 1, size - 1, 1, 1).data;
+
+          if (pixel[0] !== 255 || pixel[1] !== 0 || pixel[2] !== 0 || pixel[3] !== 255) {
+            document.querySelector('.size').innerHTML = `Vượt quá giới hạn tại: ${size} x ${size}`;
+            break;
+          }
+          document.querySelector('.size').innerHTML = `Canvas hoạt động đúng tại kích thước: ${size} x ${size}`;
         } catch (e) {
-          document.querySelector('.size').innerHTML = `Canvas vượt quá giới hạn tại: ${size} x ${size}`;
+          document.querySelector('.size').innerHTML = `Canvas lỗi tại kích thước: ${size} x ${size}`;
           break;
         }
       }
     }
 
     checkCanvasLimit();
+
 
     const resizeInfo = {
       "height": 2000,
