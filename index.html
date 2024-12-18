@@ -56,9 +56,9 @@
     if (canvasSize) {
       canvasSize
         .maxArea({
-          max: 17000,
+          max: 10000,
           min: 1,
-          step: 100,
+          step: 2,
           // useWorker: true,
           onError(results) {
             console.log('🔴', results);
@@ -70,9 +70,14 @@
         });
     }
 
+    // const canvasInfo = {
+    //   "canvasHeight": 2400,
+    //   "canvasWidth": 4266
+    // }
+
     const canvasInfo = {
-      "canvasHeight": 2400,
-      "canvasWidth": 4266
+      "canvasHeight": 1200,
+      "canvasWidth": 2133
     }
 
     // Kiểm tra giả thuyết trên iOS18.1.1 và iOS16.2
