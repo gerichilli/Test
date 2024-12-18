@@ -71,8 +71,8 @@
     }
 
     const canvasInfo = {
-      "canvasHeight": 1200,
-      "canvasWidth": 2133
+      "canvasHeight": 2400,
+      "canvasWidth": 4266
     }
 
     // Kiểm tra giả thuyết trên iOS18.1.1 và iOS16.2
@@ -137,7 +137,7 @@
     const img = new Image();
     img.onload = () => {
       imageInfo.forEach(image => {
-        drawImage(image)
+        drawImageLighter(image)
       })
     }
     img.src = './woman.png'
@@ -165,20 +165,22 @@
       );
     }
 
-    function drawImageLighter(image, id) {
-      const canvas = document.getElementById(id);
+    function drawImageLighter(image) {
+      const wrapper = document.getElementById('wrapper')
+      const canvas = document.createElement('canvas');
+      canvas.dataset.id = image.id;
+      wrapper.appendChild(canvas);
+
       canvas.height = canvasInfo.canvasHeight;
       canvas.width = canvasInfo.canvasWidth;
+      ctx = canvas.getContext('2d', { storage: 'discardable' });
 
-      const ctx = canvas.getContext('2d');
-
-      const maxPixel = 4096; // Kích thước canvas tối đa
-      const scale = canvasInfo.canvasWidth / image.width;
+      const scale = canvasInfo.canvasWidth / image.sWidth;
 
       image.dy = 0;
       image.dx = 0;
 
-      image.ratio = image.width / canvasInfo.canvasWidth;
+      image.ratio = image.sWidth / canvasInfo.canvasWidth;
 
       // For Safari
       if (image.sy < 0) {
@@ -190,11 +192,8 @@
         image.sx = 0;
       }
 
-      const adjustedWidth = Math.min(image.width + image.sx, img.width) - image.sx; // (image.width + image.sx)が元画像の幅(img.width)や高さ(img.height)を超えないように調整する
-      const adjustedHeight = Math.min(image.height + image.sy, img.height) - image.sy;
-
-      const imageWidth = Math.min(maxPixel, adjustedWidth);
-      const imageHeight = Math.min(maxPixel, adjustedHeight);
+      const imageWidth = Math.min(image.sWidth + image.sx, img.width) - image.sx; // (image.sWidth + image.sx)が元画像の幅(img.width)や高さ(img.height)を超えないように調整する
+      const imageHeight = Math.min(image.sHeight + image.sy, img.height) - image.sy;
 
       const dWidth = imageWidth * scale;
       const dHeight = imageHeight * scale;
