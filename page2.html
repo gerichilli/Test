@@ -85,6 +85,8 @@
         "sHeight": 245,
         "dx": 0,
         "dy": 0,
+        "dWidth": 1800,
+        "dHeight": 980
       },
       {
         "id": "testCase2",
@@ -94,6 +96,8 @@
         "sHeight": 490,
         "dx": 0,
         "dy": 0,
+        "dWidth": 1800,
+        "dHeight": 980
       },
       {
         "id": "testCase3",
@@ -103,6 +107,8 @@
         "sy": 0,
         "sWidth": 450,
         "sHeight": 245,
+        "dWidth": 180,
+        "dHeight": 98
       },
       {
         "id": "testCase4",
@@ -112,6 +118,8 @@
         "sHeight": 400,
         "dx": 0,
         "dy": 0,
+        "dWidth": 1000,
+        "dHeight": 600
       },
       {
         "id": "testCase5",
@@ -121,18 +129,20 @@
         "sHeight": 200,
         "dx": 0,
         "dy": 0,
+        "dWidth": 500,
+        "dHeight": 400
       },
     ]
 
     const img = new Image();
     img.onload = () => {
       imageInfo.forEach(image => {
-        drawImageLighter(image)
+        drawImage(image)
       })
     }
     img.src = './woman.png'
 
-    function drawImageLighter(image) {
+    function drawImage(image) {
       const wrapper = document.getElementById('wrapper')
       const canvas = document.createElement('canvas');
       canvas.dataset.id = image.id;
@@ -141,8 +151,6 @@
       canvas.height = canvasInfo.canvasHeight;
       canvas.width = canvasInfo.canvasWidth;
       ctx = canvas.getContext('2d', { storage: 'discardable' });
-
-      const scale = canvasInfo.canvasWidth / image.sWidth;
 
       image.dy = 0;
       image.dx = 0;
@@ -159,22 +167,16 @@
         image.sx = 0;
       }
 
-      const imageWidth = Math.min(image.sWidth, img.width - image.sx); 
-      const imageHeight = Math.min(image.sHeight, img.height - image.sy);
-
-      const dWidth = imageWidth * scale;
-      const dHeight = imageHeight * scale;
-
       ctx.drawImage(
         img,
         image.sx,
         image.sy,
-        imageWidth,
-        imageHeight,
+        image.sWidth,
+        image.sHeight,
         image.dx,
         image.dy,
-        dWidth,
-        dHeight
+        canvasInfo.canvasWidth,
+        canvasInfo.canvasHeight
       );
     }
   </script>
