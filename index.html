@@ -159,15 +159,6 @@
 
       // Chuyển canvas thành Base64 data URL
       const dataURL = canvas.toDataURL('image/png');
-      const imgElement = new Image();
-      imgElement.src = dataURL;
-      imgElement.onload = () => {
-        // Render thông tin vẽ
-        document.getElementById(`result-${id}`).innerHTML = `
-        <div>Result Image Width: ${imgElement.width}</div>
-        <div>Result Image Height: ${imgElement.height}</div>
-      `
-      };
 
       // Render thông tin vẽ
       document.getElementById(`${id}Info`).innerHTML = `
@@ -177,7 +168,7 @@
       `
     };
 
-    function drawTiledImage(image, id) {
+    function drawImageLighter(image, id) {
       const canvas = document.getElementById(id);
       canvas.height = resizeInfo.canvasHeight;
       canvas.width = resizeInfo.canvasWidth;
