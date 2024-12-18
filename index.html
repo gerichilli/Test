@@ -82,8 +82,8 @@
 
     // Kiểm tra giả thuyết trên iOS18.1.1 và iOS16.2
     // Test case 1: Hình ảnh có kích thước lớn hơn giới hạn canvas 
-    // Test case 2: Hình ảnh nhỏ hơn giới hạn canvas (nhưng vượt ngoài kích thước ảnh gốc)
-    // Test case 3: Hình ảnh nhỏ hơn giới hạn canvas (nhưng nằm trong kích thước ảnh gốc)
+    // Test case 2: Hình ảnh nhỏ hơn giới hạn canvas (Không khớp tỷ lệ giữa sWidth/sHeight và dWidth/dHeight)
+    // Test case 3: Hình ảnh nhỏ hơn giới hạn canvas (Khớp tỷ lệ giữa sWidth/sHeight và dWidth/dHeight)
     // Test case 4: Truyền vào các giá trị vượt ngoài kích thước ảnh gốc
     // Test case 5: Tạo canvas với kích thước nhỏ hơn hình chữ nhật đích
     const imageInfo = [
@@ -100,8 +100,8 @@
         "id": "testCase2",
         "sy": 0,
         "sx": 0,
-        "width": 1000,
-        "height": 500,
+        "width": 500,
+        "height": 1000,
         "dWidth": 2133,
         "dHeight": 1200,
       },
@@ -109,10 +109,10 @@
         "id": "testCase3",
         "sy": 0,
         "sx": 0,
-        "width": 450,
-        "height": 245,
-        "dWidth": 900,
-        "dHeight": 490,
+        "width": 900,
+        "height": 490,
+        "dWidth": 1800,
+        "dHeight": 980,
       }
     ]
 
