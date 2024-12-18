@@ -21,36 +21,25 @@
       font-family: "Open Sans", serif;
     }
 
-    .wrap {
+    #wrapper {
       display: flex;
+      flex-direction: column;
       gap: 20px;
     }
 
     canvas {
       width: 480px;
       height: 270px;
-    }
-
-    #canvas1 {
       background-color: #213555;
     }
 
-    #canvas2 {
-      background-color: #4B5945;
-    }
-
-    #canvas1Info {
-      color: #213555;
-      font-weight: 700;
-    }
-
-    #canvas2Info {
+    .canvas-info {
       color: #4B5945;
       font-weight: 700;
     }
 
     .size {
-      background-color: aquamarine;
+      background-color: orange;
       padding: 1rem;
       max-width: fit-content;
     }
@@ -58,24 +47,12 @@
 </head>
 
 <body>
-  <div class="wrap">
-    <div>
-      <canvas class="canvas1" id="canvas1"></canvas>
-      <p id="canvas1Info">
-        <div id="result-canvas1"></div>
-      </p>
-    </div>
-    <div>
-      <canvas class="canvas2" id="canvas2"></canvas>
-      <p id="canvas2Info">
-        <div id="result-canvas2"></div>
-      </p>
-    </div>
-  </div>
+  <div id="wrapper"></div>
   <p class="size"></p>
 
   <script src="https://cdn.jsdelivr.net/npm/canvas-size@2"></script>
   <script>
+    // Kiểm tra diện tích hợp lệ của canvas
     if (canvasSize) {
       canvasSize
         .maxArea({
@@ -89,51 +66,67 @@
         })
         .then(results => {
           console.log('🟢', results); // { success: <boolean>, ... }
-          document.querySelector('.size').innerHTML = `Max Width: ${results.width}, Max Height: ${results.height}`
+          document.querySelector('.size').innerHTML = `Max Canvas Width: ${results.width}, Max Canvas Height: ${results.height}`
         });
     }
 
-    const resizeInfo = {
-      "height": 2000,
-      "width": 3558,
+    const canvasInfo = {
       "canvasHeight": 2400,
-      "canvasWidth": 4266.666666666667
+      "canvasWidth": 4266
     }
 
-    const imageInfo1 = {
-      "sy": -2424.7999999999997,
-      "sx": -3724.2,
-      "height": 6190.8,
-      "width": 11006.4,
-    }
-
-    const imageInfo2 = {
-      "sy": 100,
-      "sx": 100,
-      "height": 518.4,
-      "width": 921.5999999999999,
-    }
+    // Kiểm tra giả thuyết trên iOS18.1.1 và iOS16.2
+    // Test case 1: Hình ảnh có kích thước lớn hơn giới hạn canvas (đối với cả hai)
+    // Test case 2: Hình ảnh nhỏ hơn giới hạn canvas (đối với iOS18.1.1) và lớn hơn giới hạn canvas (đối với iOS16.2)
+    // Test case 3: Hình ảnh nhỏ hơn giới hạn canvas (đối với cả hai)
+    // Test case 4: Truyền vào các giá trị vượt ngoài kích thước ảnh gốc
+    // Test case 5: Tạo canvas với kích thước nhỏ hơn hình chữ nhật đích
+    const imageInfo = [
+      {
+        "id": "testCase1",
+        "sy": 0,
+        "sx": 0,
+        "height": 6190.8,
+        "width": 11006.4,
+      },
+      {
+        "id": "testCase2",
+        "sy": 0,
+        "sx": 0,
+        "height": 4502.1,
+        "width": 8000,
+      },
+      {
+        "id": "testCase3",
+        "sy": 0,
+        "sx": 0,
+        "height": 562,
+        "width": 1000,
+      }
+    ]
 
     const img = new Image();
     img.onload = () => {
-      drawImage(imageInfo1, 'canvas1')
-      drawImage(imageInfo2, 'canvas2')
+      imageInfo.forEach(image => {
+        drawImage(image)
+      })
     }
     img.src = './woman.png'
 
-    function drawImage(image, id) {
-      const canvas = document.getElementById(id);
-      canvas.height = resizeInfo.canvasHeight;
-      canvas.width = resizeInfo.canvasWidth;
-      ctx = canvas.getContext('2d', { storage: 'discardable' });
+    function drawImage(image) {
+      const wrapper = document.getElementById('wrapper')
+      const canvas = document.createElement('canvas');
+      canvas.dataset.id = image.id;
+      wrapper.appendChild(canvas);
 
-      const y0 = 0;
-      const x0 = resizeInfo.width / 2;
+      canvas.height = canvasInfo.canvasHeight;
+      canvas.width = canvasInfo.canvasWidth;
+      ctx = canvas.getContext('2d', { storage: 'discardable' });
 
       image.dy = 0;
       image.dx = 0;
 
-      image.ratio = image.width / resizeInfo.canvasWidth;
+      image.ratio = image.width / canvasInfo.canvasWidth;
 
       // For Safari
       if (image.sy < 0) {
@@ -153,35 +146,25 @@
         image.height,
         image.dx,
         image.dy,
-        resizeInfo.canvasWidth,
-        resizeInfo.canvasHeight
+        canvasInfo.canvasWidth,
+        canvasInfo.canvasHeight
       );
-
-      // Chuyển canvas thành Base64 data URL
-      const dataURL = canvas.toDataURL('image/png');
-
-      // Render thông tin vẽ
-      document.getElementById(`${id}Info`).innerHTML = `
-        <div>Source Image Width: ${image.width}</div>
-        <div>Source Image Height: ${image.height}</div>
-        <div>Data URL length: ${dataURL.length}</div>
-      `
-    };
+    }
 
     function drawImageLighter(image, id) {
       const canvas = document.getElementById(id);
-      canvas.height = resizeInfo.canvasHeight;
-      canvas.width = resizeInfo.canvasWidth;
+      canvas.height = canvasInfo.canvasHeight;
+      canvas.width = canvasInfo.canvasWidth;
 
       const ctx = canvas.getContext('2d');
 
       const maxPixel = 4096; // Kích thước canvas tối đa
-      const scale = resizeInfo.canvasWidth / image.width;
+      const scale = canvasInfo.canvasWidth / image.width;
 
       image.dy = 0;
       image.dx = 0;
 
-      image.ratio = image.width / resizeInfo.canvasWidth;
+      image.ratio = image.width / canvasInfo.canvasWidth;
 
       // For Safari
       if (image.sy < 0) {
