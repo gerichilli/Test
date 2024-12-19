@@ -77,6 +77,7 @@
 
     // Kiểm tra giả thuyết trên iOS18.1.1 và iOS16.2
     const imageInfo = [
+      // Test case 1: Không scale (sWidth = img.width)
       {
         "id": "testCase1",
         "sx": 0,
@@ -88,6 +89,7 @@
         "dWidth": 4266,
         "dHeight": 2400
       },
+      // Test case 2: Scale lớn (sWidth > img.width)
       {
         "id": "testCase2",
         "sx": 0,
@@ -99,6 +101,7 @@
         "dWidth": 4266,
         "dHeight": 2400
       },
+      // Test Case 3: Scale nhỏ (sWidth < img.width)
       {
         "id": "testCase3",
         "sx": 394.2,
@@ -110,6 +113,7 @@
         "dWidth": 4266,
         "dHeight": 2400
       },
+      // Test Case 4: Vùng nguồn vẽ vượt kích thước ảnh gốc (sWidth + sx > img.width)
       {
         "id": "testCase4",
         "sx": 2800,
@@ -126,12 +130,12 @@
     const img = new Image();
     img.onload = () => {
       imageInfo.forEach(image => {
-        drawImageLighter(image)
+        drawImage(image)
       })
     }
     img.src = './img.png'
 
-    function drawImageLighter(image) {
+    function drawImage(image) {
       const wrapper = document.getElementById('wrapper')
       const canvas = document.createElement('canvas');
       canvas.dataset.id = image.id;
@@ -140,8 +144,6 @@
       canvas.height = canvasInfo.canvasHeight;
       canvas.width = canvasInfo.canvasWidth;
       ctx = canvas.getContext('2d', { storage: 'discardable' });
-
-      const scale = canvasInfo.canvasWidth / image.sWidth;
 
       // image.dy = 0;
       // image.dx = 0;
@@ -158,22 +160,16 @@
         image.sx = 0;
       }
 
-      const imageWidth = Math.min(image.sWidth, img.width - image.sx); 
-      const imageHeight = Math.min(image.sHeight, img.height - image.sy);
-
-      const dWidth = imageWidth * scale;
-      const dHeight = imageHeight * scale;
-
       ctx.drawImage(
         img,
         image.sx,
         image.sy,
-        imageWidth,
-        imageHeight,
+        image.sWidth,
+        image.sHeight,
         image.dx,
         image.dy,
-        dWidth,
-        dHeight
+        canvasInfo.canvasWidth,
+        canvasInfo.canvasHeight
       );
     }
   </script>
