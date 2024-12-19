@@ -50,25 +50,25 @@
   <div id="wrapper"></div>
   <p class="size"></p>
 
-  <script src="https://cdn.jsdelivr.net/npm/canvas-size@2"></script>
+  <!-- <script src="https://cdn.jsdelivr.net/npm/canvas-size@2"></script> -->
   <script>
     // Kiểm tra diện tích hợp lệ của canvas
-    if (canvasSize) {
-      canvasSize
-        .maxArea({
-          max: 10000,
-          min: 1,
-          step: 2,
-          // useWorker: true,
-          onError(results) {
-            console.log('🔴', results);
-          },
-        })
-        .then(results => {
-          console.log('🟢', results); // { success: <boolean>, ... }
-          document.querySelector('.size').innerHTML = `Max Canvas Width: ${results.width}, Max Canvas Height: ${results.height}`
-        });
-    }
+    // if (canvasSize) {
+    //   canvasSize
+    //     .maxArea({
+    //       max: 10000,
+    //       min: 1,
+    //       step: 2,
+    //       // useWorker: true,
+    //       onError(results) {
+    //         console.log('🔴', results);
+    //       },
+    //     })
+    //     .then(results => {
+    //       console.log('🟢', results); // { success: <boolean>, ... }
+    //       document.querySelector('.size').innerHTML = `Max Canvas Width: ${results.width}, Max Canvas Height: ${results.height}`
+    //     });
+    // }
 
     const canvasInfo = {
       "canvasHeight": 2400,
